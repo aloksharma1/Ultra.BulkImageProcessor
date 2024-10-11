@@ -12,6 +12,7 @@ using Size = SixLabors.ImageSharp.Size;
 using Image = SixLabors.ImageSharp.Image;
 using XUCore.ShellProgressBar;
 using Ultra.Framework.Strings.Helpers;
+using Ultra.Framework.IO.Helpers;
 
 namespace Ultra.BulkImageProcessor;
 
@@ -72,8 +73,9 @@ static class Program
             var userOutputPath = Console.ReadLine()?.Trim();
             if (string.IsNullOrWhiteSpace(userOutputPath))
             {
-                options.OutputPath = Path.Combine(options.SourcePath, "compressed-result");
-                Directory.CreateDirectory(options.OutputPath);
+                //get directory from path in case it can be file or directory
+                options.OutputPath = Path.Combine(Path.GetDirectoryName(options.SourcePath)!, "compressed-result");
+                DirectoryHelper.CreateDirectory(options.OutputPath);
             }
             else
             {
@@ -138,9 +140,15 @@ static class Program
         if (string.IsNullOrWhiteSpace(outputPath))
         {
             outputPath = Path.Combine(sourcePath, "compressed-result");
-            Directory.CreateDirectory(outputPath);
+            DirectoryHelper.CreateDirectory(outputPath);
         }
-
+        if (File.Exists(sourcePath))
+        {
+            // If it's a file, process it as a single file            
+            await ProcessSingleImageAsync(sourcePath, outputPath, width, height, resizeMode, quality, outputFormat);
+            Console.WriteLine(FiggleFonts.Standard.Render("Compression Completed!"));
+            return;
+        }
         // Get all image files recursively
         var imageFiles = Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories)
                                   .Where(file => file.EndsWith(".jpg") || file.EndsWith(".png") || file.EndsWith(".jpeg"))

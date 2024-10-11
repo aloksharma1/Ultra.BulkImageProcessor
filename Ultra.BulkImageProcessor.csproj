@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PublishAot>true</PublishAot>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<Company>Aetherius Infosolutions Pvt Ltd</Company>
+		<Authors>Alok Sharma</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Product>Ultra Bulk Image Processor</Product>
+		<Description>A cross-platform tool to bulk resize and compress images.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CommandLineParser" Version="2.9.1" />
+		<PackageReference Include="Figgle" Version="0.5.1" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
+		<PackageReference Include="Ultra.Framework.IO" Version="1.0.0" />
+		<PackageReference Include="Ultra.Framework.Strings" Version="1.0.0" />
+		<PackageReference Include="XUCore.ShellProgressBar" Version="6.10.9" />
+	</ItemGroup>
+
+</Project>

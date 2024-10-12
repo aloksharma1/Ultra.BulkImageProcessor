@@ -60,28 +60,50 @@ static class Program
     static void InteractivePromptIfMissing(Options options)
     {
         // If source path is missing, prompt the user for it
-        if (string.IsNullOrWhiteSpace(options.SourcePath))
+        if (options.SourcePath.IsNullOrWhiteSpace())
         {
             Console.Write("Enter the source path of images: ");
             options.SourcePath = Console.ReadLine()?.Trim() ?? "";
         }
 
         // If output path is not provided, set the default output path or ask the user
-        if (string.IsNullOrWhiteSpace(options.OutputPath))
+        if (options.OutputPath.IsNullOrWhiteSpace())
         {
             Console.Write("Enter the output path to save resized images (or press Enter to use default): ");
             var userOutputPath = Console.ReadLine()?.Trim();
-            if (string.IsNullOrWhiteSpace(userOutputPath))
+
+            if (userOutputPath.IsNullOrWhiteSpace())
             {
-                //get directory from path in case it can be file or directory
-                options.OutputPath = Path.Combine(Path.GetDirectoryName(options.SourcePath)!, "compressed-result");
+                // Determine if the source path is a file or directory
+                if (File.Exists(options.SourcePath))
+                {
+                    // If the source path is a file, use its directory
+                    options.OutputPath = Path.Combine(Path.GetDirectoryName(options.SourcePath)!, "compressed-result");
+                }
+                else if (Directory.Exists(options.SourcePath))
+                {
+                    // If the source path is a directory, use it directly
+                    options.OutputPath = Path.Combine(options.SourcePath, "compressed-result");
+                }
+                else
+                {
+                    // If the source path does not exist, fallback to a default directory
+                    options.OutputPath = Path.Combine(Directory.GetCurrentDirectory(), "compressed-result");
+                }
+
+                // Create the output directory if it doesn't exist
                 DirectoryHelper.CreateDirectory(options.OutputPath);
             }
             else
             {
-                options.OutputPath = userOutputPath;
+                // Use the user-provided output path
+                options.OutputPath = userOutputPath!;
+
+                // Create the output directory if it doesn't exist
+                DirectoryHelper.CreateDirectory(options.OutputPath);
             }
         }
+
 
         // Prompt for width if missing
         if (!options.Width.HasValue)
